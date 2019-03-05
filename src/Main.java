@@ -56,7 +56,24 @@ public class Main {
             }
         }
 
-        //compute UEVAR and VARKILL
+        //initialize LIVEOUT, UEVAR and VARKILL
+        List<FlowSet<ValueBox>> liveout = new ArrayList<>();
+        List<FlowSet<ValueBox>> uevar = new ArrayList<>();
+        List<FlowSet<ValueBox>> varkill = new ArrayList<>();
+
+        for(int k = 0; k < iterList.size(); k++) {
+            Block current = iterList.get(k);
+            FlowSet<ValueBox> lo = new ArraySparseSet<>();
+            FlowSet<ValueBox> uv = new ArraySparseSet<>();
+            FlowSet<ValueBox> vk = new ArraySparseSet<>();
+            //LIVEOUT
+            liveout.add(lo);
+            //UEVAR
+            Iterator<Unit> curUnit = current.iterator();
+            while(curUnit.hasNext()) {
+                Unit unit = curUnit.next();
+            }
+        }
 
         //iteratively compute LIVEOUT
 
@@ -69,7 +86,6 @@ public class Main {
                 System.out.println(unit.toString());
             }
         }
-
     }
 
     public static void configureSoot(String classpath) {
