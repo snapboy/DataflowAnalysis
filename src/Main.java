@@ -21,20 +21,55 @@ public class Main {
         Body methodBody = testMethod.retrieveActiveBody();
         BlockGraph blockGraph = new BriefBlockGraph(methodBody);
 
-        //get basic blocks
-        List<Block> blocks = new ArrayList<Block>(blockGraph.getBlocks());
-
-        //iterate over instructions
-        Iterator<Block> graphIt = blockGraph.getBlocks().iterator();
+        //get basic blocks and generate a topological sorted list of them
+        List<Block> iterList = new ArrayList<Block>();
+        Iterator<Block> graphIt = blockGraph.getTails().iterator();
         while (graphIt.hasNext()) {
             Block block = graphIt.next();
+            iterList.add(block);
+        }
+        boolean exist = false, contain = true;
+        while(!exist) {
+            exist = true;
+            int m = iterList.size(), nexts = 0;
+            for (int i = 0; i < m; i++) {
+                List<Block> pred = iterList.get(i).getPreds();
+                nexts += pred.size();
+                int n = pred.size();
+                for (int j = 0; j < n; j++) {
+                    Block p = pred.get(j);
+                    if (!iterList.contains(p)) {
+                        exist = false;
+                        List<Block> succs = p.getSuccs();
+                        contain = true;
+                        for(Block suc : succs) {
+                            if (!iterList.contains(suc))
+                                contain = false;
+                        }
+                        if(nexts == 1)
+                            contain = true;
+                        if(contain) {
+                            iterList.add(p);
+                        }
+                    }
+                }
+            }
+        }
+
+        //compute UEVAR and VARKILL
+
+        //iteratively compute LIVEOUT
+
+
+        for(Block r : iterList) {
             System.out.println("New block");
-            Iterator<Unit> blockIt = block.iterator();
+            Iterator<Unit> blockIt = r.iterator();
             while (blockIt.hasNext()) {
                 Unit unit = blockIt.next();
                 System.out.println(unit.toString());
             }
         }
+
     }
 
     public static void configureSoot(String classpath) {
